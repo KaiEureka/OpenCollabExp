@@ -45,6 +45,7 @@ for _name in (
     globals()[_name] = getattr(_proxy, _name)
 
 RUNTIME_IMPORT_PROBES = (
+    "opencollab_eval.generation.gen_prediction",
     "opencollab_eval.generation.gen_prediction_openhands",
     "opencollab_eval.generation.gen_prediction_workflow",
     "opencollab_eval.engine.evaluator",
@@ -52,7 +53,10 @@ RUNTIME_IMPORT_PROBES = (
 )
 RUNTIME_PUBLIC_MODULES = (
     "__init__.py",
+    "builtin_workflows/__init__.py",
     "environments.py",
+    "patches.py",
+    "profiles.py",
     "tools.py",
     "workflows.py",
 )
@@ -550,10 +554,15 @@ def sync_runtime(
             "import opencollab, opencollab_eval; "
             "from opencollab import OpenCollab, RunResult; "
             "from opencollab.environments import attach_container; "
-            "from opencollab.tools import builtin_tools; "
+            "from opencollab.tools import builtin_tools, evidence_tools; "
+            "from opencollab.builtin_workflows import duo; "
+            "from opencollab.patches import patch_paths; "
+            "from opencollab.profiles import resolve_profile_name; "
+            "assert callable(resolve_profile_name); "
             "from opencollab.workflows import workflow; "
             f"assert opencollab.__version__=={distribution_version!r}; "
-            "assert OpenCollab and RunResult and attach_container and builtin_tools and workflow"
+            "assert OpenCollab and RunResult and attach_container and builtin_tools and workflow; "
+            "assert evidence_tools and duo and patch_paths"
         )
     )
     prepare_commands.append(

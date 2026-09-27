@@ -10,7 +10,7 @@ readme = "README.md"
 requires-python = ">=3.10"
 license = "MulanPSL-2.0"
 license-files = ["LICENSE", "NOTICE", "THIRD_PARTY_NOTICES.md"]
-dependencies = ["opencollab-eval>=0.7.0,<0.8", "opencollab>=0.7.0,<0.8", "httpx>=0.27"]
+dependencies = ["opencollab-eval>=0.8.0,<0.9", "opencollab>=0.8.0,<0.9", "httpx>=0.27"]
 
 [project.optional-dependencies]
 dev = ["pytest>=8", "pytest-asyncio>=0.24", "ruff>=0.5"]

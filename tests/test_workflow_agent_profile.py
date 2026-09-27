@@ -15,8 +15,12 @@ from opencollab import OpenCollab, RunResult
 from opencollab.environments import local_environment
 from opencollab.tools import profile_tool_limits
 from opencollab_eval.engine import evaluator_sessions
-from opencollab_eval.runtime_config import SINGLE2_AUTHORIZED_BUDGET, SINGLE2_AUTHORIZED_MAX_STEPS
-from opencollab_eval.verification import BashEvidence, evaluation_tools
+from opencollab_eval.runtime_config import (
+    SINGLE2_AUTHORIZED_BUDGET,
+    SINGLE2_AUTHORIZED_MAX_STEPS,
+    resolve_workflow_agent_profile,
+)
+from opencollab_eval.verification import BashEvidence
 from swe_v1_prolite_runner_test_support import _remote_namespace, _seed_remote_completed_generation
 from test_swe_g11_parallel_runner import _args, _load_module
 
@@ -35,11 +39,11 @@ def test_workflow_generator_cli_exposes_independent_profile_selection():
         check=True,
     )
     assert "--workflow WORKFLOW" in result.stdout
-    assert "--agent-profile {single,single2}" in result.stdout
+    assert "--agent-profile PROFILE" in result.stdout
     assert methods.load_workflow(WORKFLOW) is g21.validation_council_dual_coder_contract_v1
 
 
-@pytest.mark.parametrize("profile", [None, "single", "single2"])
+@pytest.mark.parametrize("profile", [None, "base", "default", "single", "single2"])
 def test_evaluator_selects_profile_without_replacing_workflow(monkeypatch, tmp_path, profile):
     calls = []
 
@@ -71,7 +75,7 @@ def test_evaluator_selects_profile_without_replacing_workflow(monkeypatch, tmp_p
     assert workflow is g21.validation_council_dual_coder_contract_v1
     assert inputs["description"] == "repair public behavior"
     manifest = json.loads((tmp_path / "trajectories/profile-combination/workflow.json").read_text())
-    if profile == "single2":
+    if resolve_workflow_agent_profile(profile) == "single2":
         assert options["agent_profile"] == "single2"
         assert "system_prompt" not in options
         assert manifest["agent_profile"] == "single2"
@@ -91,8 +95,9 @@ def test_parallel_and_remote_configuration_carry_the_profile(tmp_path):
     assert command[command.index("--workflow") + 1] == WORKFLOW
     assert command[command.index("--agent-profile") + 1] == "single2"
     default = runner.resolve_config(_args(workflow=WORKFLOW, agent_profile="single"))
-    assert default.agent_profile is None
-    assert "--agent-profile" not in task_command(default, default.indices[0])
+    assert default.agent_profile == "single2"
+    default_command = task_command(default, default.indices[0])
+    assert default_command[default_command.index("--agent-profile") + 1] == "single2"
     namespace = _remote_namespace(tmp_path, workflow=WORKFLOW, agent_profile="single2")
     assert namespace["workflow"] == WORKFLOW
     assert namespace["agent_profile"] == "single2"
@@ -103,7 +108,7 @@ def test_evaluator_single_session_uses_native_single2_arguments(monkeypatch, tmp
     calls = []
 
     class Client:
-        async def agent2(self, prompt, **kwargs):
+        async def agent(self, prompt, **kwargs):
             calls.append((prompt, kwargs))
             return RunResult(output="finished", status="completed", metrics={"execution_quiesced": True})
 
@@ -119,6 +124,7 @@ def test_evaluator_single_session_uses_native_single2_arguments(monkeypatch, tmp
     ))
     prompt, kwargs = calls[0]
     assert prompt == "repair public behavior"
+    assert kwargs["profile"] == "single2"
     assert {"system_prompt", "tools", "name"}.isdisjoint(kwargs)
     assert kwargs["budget"] == 1_000_000
     assert result.error is None
@@ -246,21 +252,13 @@ async def test_original_g21_profiles_coders_and_adjudicator_with_real_candidate_
     baseline = await client.agent2("Record the native profile prompt", tools=[], trace=False)
     assert baseline.ok
     system_prompt = requests[0]["messages"][0]["content"]
-    coder_tools = []
     observed_instances = []
     original_execute = BashEvidence.execute_with_runtime
-
-    def build_coder_tools():
-        tools = list(evaluation_tools("bash", "file_read", "file_write", "apply_patch", "grep", "git_diff",
-                                      headless=False))
-        coder_tools.append(tools)
-        return tools
 
     async def execute(tool, params, runtime):
         observed_instances.append(tool)
         return await original_execute(tool, params, runtime)
 
-    monkeypatch.setattr(g21, "_coder_tools", build_coder_tools)
     monkeypatch.setattr(BashEvidence, "execute_with_runtime", execute)
     env = local_environment(source)
 
@@ -269,7 +267,7 @@ async def test_original_g21_profiles_coders_and_adjudicator_with_real_candidate_
 
     result = await run_eval_task(
         EvalTask(task_id="g21-single2", description="parse must accept empty text and None as empty input",
-                 timeout=60, max_tokens=10_000),
+                 timeout=60, max_tokens=10_000, extras={"allow_unisolated_shell": True}),
         model="unit-model", provider="openai", api_key="test-key", base_url="https://model.example.invalid/v1",
         output_dir=str(tmp_path / "output"), env_factory=factory, tools_factory=list,
         workflow=g21.validation_council_dual_coder_contract_v1, agent_profile="single2", max_steps=6,
@@ -292,9 +290,9 @@ async def test_original_g21_profiles_coders_and_adjudicator_with_real_candidate_
             assert "generic workflow override sentinel" not in prompt
     assert command in roles["B"][0]["messages"][1]["content"]
     assert [tool["function"]["name"] for tool in roles["judge"][0]["tools"]] == ["structured_output"]
-    assert len(coder_tools) == len(observed_instances) == 2
-    for tools, observed in zip(coder_tools, observed_instances, strict=True):
-        assert observed is tools[0]
+    assert len(observed_instances) == 2
+    assert observed_instances[0] is not observed_instances[1]
+    for observed in observed_instances:
         assert isinstance(observed, BashEvidence)
         assert observed.max_output_chars == profile_tool_limits("single2")["bash"]["max_output_chars"]
         assert observed.verification_records[-1]["command"] == command

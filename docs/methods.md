@@ -2,10 +2,11 @@
 
 **English** | [简体中文](methods.zh-CN.md)
 
-Experiment methods are explicitly registered in `opencollab_exp.methods`. All 31 workflows and the review/fix method are loadable. The former 14 package exports remain available, and the 17 previously omitted strategies can be selected by name.
+Experiment methods are explicitly registered in `opencollab_exp.methods`. The canonical `duo` entry loads `opencollab.builtin_workflows:duo` from OC 0.8.0. The 31 research workflows and the review/fix method remain loadable, for 33 total entries. The former 14 package exports remain available, and the 17 previously omitted strategies can be selected by name.
 
 | Name | Former export status | Family |
 | --- | --- | --- |
+| `duo` | OC public built-in | Canonical Duo |
 | `analyst-solve` | Package export | Analyst / TeamPro |
 | `base-team` | Package export | Base |
 | `base-team-single-pass-v1` | Package export | Base |
@@ -43,4 +44,6 @@ Experiment methods are explicitly registered in `opencollab_exp.methods`. All 31
 
 `DEFAULT_WORKFLOW_SOLVERS` retains the existing presets for `g11`, `g1.1`, `g20-exp1`, `g20-exp2`, `g11-wired`, `baseTeam`, `TeamPro`, `openhands`, and `claude-code`. `WorkflowSolverSpec` is supplied by OpenCollab-Eval; names, budgets, model settings, and external command templates belong to OpenCollabExp. The three previously unresolved G20 targets now load through the complete registry.
 
-The role graphs and helper functions move together under `workflows`. G22 v2 and v3 keep the G21 control flow, Red-Green v2 keeps the v1 selection and adoption rules, and TeamPro continues to delegate to the analyst method. Existing role permissions, public evidence validation, and candidate adoption rules are retained. Method tests cover these behaviors with scripted responses and synthetic source programs.
+The role graphs and helper functions move together under `workflows`. G21 delegates to the public OC `run_dual_coder` with its fixed prompts. Historical G22 v2 and v3 retain the legacy control flow, Red-Green v2 keeps the v1 selection and adoption rules, and TeamPro continues to delegate to the analyst method. Existing role permissions, public evidence validation, and candidate adoption rules are retained. Method tests cover these behaviors with scripted responses and synthetic source programs.
+
+`CANONICAL_WORKFLOW_METHODS` identifies the OC-owned default. `LEGACY_RESEARCH_WORKFLOWS` identifies the 32 retained experiment entries. Selecting `duo` uses the same OC function object as its built-in registry.

@@ -17,6 +17,7 @@ import types
 from collections.abc import Sequence
 from pathlib import Path
 
+from opencollab.profiles import resolve_profile_name
 from opencollab_eval.engine.swe_v1_remote_state import (
     DEFAULT_EVAL_CONTAINER_BIND_TIMEOUT_SECONDS,
     MAX_EVAL_CONTAINER_BIND_TIMEOUT_SECONDS,
@@ -84,7 +85,9 @@ def main(*, prog: str | None = None, argv: Sequence[str] | None = None) -> int:
         default=[],
         help="Allowed workflow KEY=VALUE setting, repeatable for multiple values",
     )
-    parser.add_argument("--agent-profile", choices=("single", "single2"), help="Agent profile for workflow roles")
+    parser.add_argument(
+        "--agent-profile", type=resolve_profile_name, metavar="PROFILE", help="Agent profile for workflow roles",
+    )
     parser.add_argument("--openhands-command", default="", help="External Solver command template")
     parser.add_argument(
         "--openhands-empty-patch-rejections",

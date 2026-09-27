@@ -17,9 +17,9 @@
       "tests/test_tool_guardrails.py::test_headless_command_tools_and_grep_cannot_read_outside_secret"
     ],
     "H-02": [
-      "OpenCollab-Eval",
+      "OpenCollab",
       "fixed",
-      "src/opencollab_eval/verification/bash_evidence.py",
+      "opencollab/adapters/tools/evidence/bash_evidence.py",
       "tests/test_native_bash_evidence.py",
       "tests/test_native_bash_evidence.py::test_shell_output_forgery_cannot_create_test_evidence[noop]"
     ],
@@ -311,9 +311,9 @@
       "tests/test_gen_prediction_single_agent_recovery.py::test_pending_publish_retains_candidate_when_output_path_is_replaced"
     ],
     "H-44": [
-      "OpenCollab-Eval",
+      "OpenCollab",
       "fixed",
-      "src/opencollab_eval/verification/bash_evidence.py",
+      "opencollab/adapters/tools/evidence/bash_evidence.py",
       "tests/test_native_bash_evidence.py",
       "tests/test_native_bash_evidence.py::test_directory_evidence_requires_a_descendant_pass"
     ],
@@ -500,9 +500,9 @@
       "tests/test_repository_hygiene.py::test_repository_python_files_stay_within_line_limit"
     ],
     "H-71": [
-      "OpenCollab-Eval",
+      "OpenCollab",
       "fixed",
-      "src/opencollab_eval/verification/bash_evidence.py",
+      "opencollab/adapters/tools/evidence/bash_evidence.py",
       "tests/test_native_bash_evidence.py",
       "tests/test_native_bash_evidence.py::test_go_duplicate_selector_cannot_create_ambiguous_evidence"
     ],
@@ -554,6 +554,13 @@
       "src/opencollab_exp/commands/swe_final_report.py",
       "tests/test_swe_final_report.py",
       "tests/test_swe_final_report.py::test_final_report_restores_completed_backups_when_backup_phase_fails"
+    ],
+    "duo-coder-role-controls": [
+      "OpenCollabExp",
+      "fixed",
+      "src/opencollab_exp/workflows/validation_council_dual_coder_contract.py",
+      "tests/test_duo_adapter.py",
+      "tests/test_duo_adapter.py::test_g21_compatibility_entry_passes_its_prompt_to_oc_execution"
     ]
   },
   "test_owners": {

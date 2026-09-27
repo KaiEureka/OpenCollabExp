@@ -21,9 +21,14 @@ flowchart TD
 | Pier | Native jobs, trials and the installed backend's evaluation behavior | Its own interpreter, CLI arguments and job configuration |
 | OpenCollab | Agent, tool, environment and workflow execution primitives | Its documented public API |
 
-The method registry in `opencollab_exp.methods` contains 31 workflows and the
-review/fix method. Method names resolve to full callable references such as
-`opencollab_exp.workflows.self_collab:self_collab`. The evaluation core loads the
+The development pair uses OpenCollab 0.8.x and OpenCollab-Eval 0.8.x.
+The method registry in `opencollab_exp.methods` contains canonical OC Duo plus
+31 retained research workflows and the review/fix method, for 33 entries.
+Canonical `duo` resolves to `opencollab.builtin_workflows:duo`, with the `base`
+role profile mapped to `single2`. `oc-exp duo` selects the canonical workflow;
+`oc-exp g22` is its compatibility command name. Research method names resolve
+to explicit references such as `opencollab_exp.workflows.self_collab:self_collab`.
+The evaluation core loads the
 selected reference through its generic loader. This runtime selection makes
 experiment policy explicit while keeping the package dependency direction
 from Exp to the evaluation engine.
@@ -65,7 +70,7 @@ The companion OCE interfaces are developed on
 `codex/extract-experiment-layer`, with its `main` branch retained. Development
 installs OpenCollab, the companion OCE checkout and Exp as three editable
 packages. Backend tests use a fake native CLI, while method tests load all
-32 entries and exercise scripted workflows.
+33 entries and exercise scripted workflows.
 
 See [the root README](../README.md), [backend adapters](backends.md),
 [method registry](methods.md) and [migration](migration.md) for concrete entry

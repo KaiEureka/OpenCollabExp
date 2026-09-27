@@ -250,13 +250,13 @@ def test_native_system_exit_values_are_handled(monkeypatch, capsys, exit_value, 
     assert captured.err == ("native configuration error\n" if expected else "")
 
 
-def test_methods_command_lists_and_loads_all_32_methods(capsys):
+def test_methods_command_lists_and_loads_all_33_methods(capsys):
     from opencollab_exp import methods
 
     assert cli.main(["methods", "--json"]) == 0
 
     listed = json.loads(capsys.readouterr().out)
-    assert len(listed) == 32
+    assert len(listed) == 33
     assert listed == methods.WORKFLOW_METHODS
     for name, reference in listed.items():
         selected = methods.load_workflow(reference)

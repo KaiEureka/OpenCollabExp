@@ -7,16 +7,21 @@ repair policies, and method presets. Python defines deterministic control flow w
 OpenCollab provides the public agent and candidate APIs. OpenCollab-Eval supplies
 candidate preparation, evidence observation, candidate capture, and official scoring.
 
-The methods target the public API in OpenCollab 0.7.0 and later 0.7.x releases,
-paired with OpenCollab-Eval 0.7.x.
+The methods target the public API in OpenCollab 0.8.0 and later 0.8.x releases,
+paired with OpenCollab-Eval 0.8.x.
 
 ## Method selection
 
-`opencollab_exp.methods.WORKFLOW_METHODS` registers all 31 retained workflow names and
-`generate_review_fix`. The former 14 package exports remain available with their
-original callable identities. The 17 variants previously omitted from the bundled
-generator registry are selectable through their method names and explicit references.
+`opencollab_exp.methods.CANONICAL_WORKFLOW_METHODS` exposes `duo` as
+`opencollab.builtin_workflows:duo`, the public OC implementation.
+`WORKFLOW_METHODS` also retains the 31 research workflows and `generate_review_fix`,
+for 33 available entries. `LEGACY_RESEARCH_WORKFLOWS` identifies those 32 research
+entries. The original 14 package exports remain available.
 [Methods](../../../docs/methods.md) lists every registered name and its execution role.
+
+G21 keeps its fixed coder and selector prompts and delegates execution to the public
+OC `run_dual_coder`. Historical G22 v2/v3 explicitly use retained legacy helpers for
+research reproduction. The Duo and G22 commands select the canonical OC method.
 
 `workflow_reference(name)` resolves a method to `module:function`.
 `load_workflow(name)` uses the generic OpenCollab-Eval loader.
@@ -27,21 +32,22 @@ methods use `isolated`, preserving their candidate preparation choices.
 ```python
 from opencollab_exp.methods import load_workflow, workflow_options
 
-method = load_workflow("validation-council-dual-coder-selection-v2")
-options = workflow_options("validation-council-dual-coder-selection-v2")
+method = load_workflow("duo")
+options = workflow_options("duo")
 ```
 
 ```bash
 python -m opencollab_eval.generation.gen_prediction_workflow \
   --instance-file /path/to/instance.json \
   --output /path/to/predictions.jsonl \
-  --workflow opencollab_exp.workflows.validation_council_solve:validation_council_solve \
-  --workflow-label validation-council-solve \
-  --candidate-environment shared
+  --workflow opencollab.builtin_workflows:duo \
+  --workflow-label duo \
+  --candidate-environment isolated
 ```
 
-Workflow choice and `agent_profile` are independent. `single` selects the default
-OpenCollab role driver and `single2` selects Single2 for every role. Solver presets
+Workflow choice and `agent_profile` are independent. An omitted workflow profile
+preserves configured role behavior. The `base`, `default`, `single`, and `single2`
+profile aliases resolve to Base/Single2. Standalone Single defaults to Base. Solver presets
 retain their prior budgets, attempts, sampling values, and external command templates.
 The templates now point to resources packaged in OpenCollabExp.
 
@@ -73,8 +79,8 @@ async def my_flow(ctx: Any, args: dict[str, Any]) -> dict[str, Any]:
 
 Register an explicit callable reference in `WORKFLOW_METHODS` when adding a method.
 Private helper modules retain shared prompt definitions and execution functions.
-`team-pro` calls `analyst-solve`. G22 v2 and v3 call the G21 execution function with
-selector and adjudicator choices. G20 variants retain their evidence handoff and
+`team-pro` calls `analyst-solve`. G22 v2 and v3 call the retained legacy execution
+function with selector and adjudicator choices. G20 variants retain their evidence handoff and
 candidate selection helpers used by the coder workflows.
 
 ## Evidence and algorithm behavior

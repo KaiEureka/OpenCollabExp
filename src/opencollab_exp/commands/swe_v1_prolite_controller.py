@@ -19,6 +19,7 @@ from typing import Any
 from opencollab_eval.candidate_bytes import candidate_byte_environment
 from opencollab_eval.engine.native_progress_watch import controller_wall_timeout
 from opencollab_eval.engine.swe_eval_scoring_adapters import REGISTRY_ENV
+from opencollab_eval.runtime_config import resolve_solver_agent_profile
 
 from opencollab_exp.commands import _swe_eval_layer_integrity as _integrity
 from opencollab_exp.commands import swe_local_runner_transport as _local_transport
@@ -182,7 +183,7 @@ def _remote_payload(
         "base_run_dir": args.base_run_dir,
         "workflow": args.workflow,
         **_experiment_workflow_payload(args.workflow, args.remote_runtime_repo),
-        "agent_profile": getattr(args, "agent_profile", None),
+        "agent_profile": resolve_solver_agent_profile(args.workflow, getattr(args, "agent_profile", None)),
         "scoring_adapter_registry": str(scoring_registry or os.environ.get(REGISTRY_ENV, "")),
         "workflow_env": normalize_workflow_env(args.workflow_env),
         "openhands_command": args.openhands_command,
@@ -299,8 +300,7 @@ def _run_remote(args: argparse.Namespace) -> dict[str, Any]:
         "max_empty_patch_retries": 1,
         "llm_model": "",
         "llm_provider": "anthropic",
-        "context_window": None,
-        "temperature": None,
+        "context_window": None, "temperature": None,
         "top_p": None,
         "max_output_tokens": None,
         "max_eval_attempts": 2,

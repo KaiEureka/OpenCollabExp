@@ -2,10 +2,11 @@
 
 [English](methods.md) | **简体中文**
 
-实验方法在 `opencollab_exp.methods` 中显式登记。31 种工作流和 review/fix 均可加载。原 14 项包级导出保留，此前缺少导出的 17 种策略也支持按名称选择。
+实验方法在 `opencollab_exp.methods` 中显式登记。canonical `duo` 从 OC 0.8.0 加载 `opencollab.builtin_workflows:duo`。31 种研究工作流和 review/fix 继续可加载，共 33 项入口。原 14 项包级导出保留，此前缺少导出的 17 种策略也支持按名称选择。
 
 | 名称 | 原导出状态 | 方法族 |
 | --- | --- | --- |
+| `duo` | OC 公开内置方法 | Canonical Duo |
 | `analyst-solve` | 包级导出 | Analyst / TeamPro |
 | `base-team` | 包级导出 | Base |
 | `base-team-single-pass-v1` | 包级导出 | Base |
@@ -43,4 +44,6 @@
 
 `DEFAULT_WORKFLOW_SOLVERS` 保留 `g11`、`g1.1`、`g20-exp1`、`g20-exp2`、`g11-wired`、`baseTeam`、`TeamPro`、`openhands` 和 `claude-code` 的现有预设。数据类型 `WorkflowSolverSpec` 来自 OpenCollab-Eval，具体名称、预算、模型设置和外部命令模板来自 OpenCollabExp。此前三个无法解析的 G20 target 现在通过完整注册表加载。
 
-`workflows` 中的角色图与辅助函数整体迁移。G22 v2、v3 继续复用 G21 控制流，Red-Green v2 继续复用 v1 的选择与采用规则，TeamPro 继续转发 analyst 方法。原有角色权限、公开证据验证与候选采用规则保留。方法测试使用脚本化返回值和合成源程序覆盖这些行为。
+`workflows` 中的角色图与辅助函数整体迁移。G21 通过固定提示委派 OC 公开 `run_dual_coder`。历史 G22 v2、v3 继续保留 legacy 控制流，Red-Green v2 继续复用 v1 的选择与采用规则，TeamPro 继续转发 analyst 方法。原有角色权限、公开证据验证与候选采用规则保留。方法测试使用脚本化返回值和合成源程序覆盖这些行为。
+
+`CANONICAL_WORKFLOW_METHODS` 标明由 OC 管理的默认方法。`LEGACY_RESEARCH_WORKFLOWS` 标明 32 项保留实验入口。选择 `duo` 会使用 OC 内置注册表中的同一个函数对象。

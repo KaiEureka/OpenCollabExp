@@ -9,6 +9,7 @@ from opencollab.workflows import CandidateRun
 from opencollab_eval.generation.gen_prediction_workflow_inputs import _resolve_blind_validation
 
 from opencollab_exp import methods
+from opencollab_exp.workflows import _legacy_dual_coder as legacy
 from opencollab_exp.workflows import validation_council_dual_coder_contract as g21
 from opencollab_exp.workflows import validation_council_dual_coder_selection as g22
 
@@ -124,7 +125,7 @@ async def test_parallel_g21_g22_keep_their_selector_prompts_and_role_options(mon
     assert "that entry's own a_evidence and b_evidence arrays" in prompt22
     assert "that entry's own a_evidence and b_evidence arrays" not in prompt21
     assert options21 == options22
-    assert options22["schema"] is g21.contract.CONTRACT_SCHEMA
+    assert options22["schema"] is legacy.contract.CONTRACT_SCHEMA
     assert options22["tools"] == [] and options22["budget"] is None
     assert ctx21.adoptions[0][1] == ctx22.adoptions[0][1] == ["test_hidden.py"]
     assert ctx21.phases == ctx22.phases

@@ -142,7 +142,11 @@ def workflow_solver_spec(name: str) -> WorkflowSolverSpec:
     return DEFAULT_WORKFLOW_SOLVERS[name]
 
 
+CANONICAL_WORKFLOW_METHODS = {"duo": "opencollab.builtin_workflows:duo"}
+
+
 WORKFLOW_METHODS: dict[str, str] = {
+    **CANONICAL_WORKFLOW_METHODS,
     "analyst-solve": "opencollab_exp.workflows.analyst_solve:analyst_solve",
     "base-team": "opencollab_exp.workflows.base_team:base_team",
     "base-team-single-pass-v1": "opencollab_exp.workflows.base_team_single_pass:base_team_single_pass_v1",
@@ -238,6 +242,9 @@ WORKFLOW_METHODS: dict[str, str] = {
 }
 
 
+LEGACY_RESEARCH_WORKFLOWS = tuple(name for name in WORKFLOW_METHODS if name not in CANONICAL_WORKFLOW_METHODS)
+
+
 LEGACY_BUNDLED_WORKFLOWS = (
     "analyst-solve",
     "base-team",
@@ -299,6 +306,8 @@ def bundled_workflow_registry() -> dict[str, Callable[..., Any]]:
 
 
 __all__ = [
+    "CANONICAL_WORKFLOW_METHODS",
+    "LEGACY_RESEARCH_WORKFLOWS",
     "DEFAULT_WORKFLOW_SOLVERS",
     "KIMI_CODING_BASE_URL",
     "LEGACY_BUNDLED_WORKFLOWS",

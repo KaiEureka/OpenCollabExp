@@ -6,7 +6,7 @@ from typing import Any
 
 from opencollab.workflows import CandidateRun, workflow
 
-from . import validation_council_dual_coder_contract as coders
+from . import _legacy_dual_coder as coders
 from . import validation_council_wired_dual_g20 as dual
 from ._validation_council_solve_defs import (
     SHARED_RULES,

@@ -15,8 +15,15 @@ retains its resource, generation and verification settings.
 The companion OpenCollab-Eval interface work lives on
 `codex/extract-experiment-layer`. OpenCollab-Eval's `main` branch remains
 unchanged. Use a separate checkout of that branch for the paired development
-installation. The experiment workflow registry contains 31 workflows and the
-review/fix method, with 32 entries available through `oc-exp methods --json`.
+installation. The paired development versions are OpenCollab 0.8.x and
+OpenCollab-Eval 0.8.x. The registry contains the canonical OC Duo plus the
+retained 31 research workflows and review/fix method, with 33 entries available
+through `oc-exp methods --json`.
+
+The canonical entry is `duo`, referencing `opencollab.builtin_workflows:duo`.
+Its `base` role profile resolves to `single2`. `oc-exp duo` selects that native
+workflow, and `oc-exp g22` is its compatibility command name. Retained research
+methods remain individually selectable through their explicit references.
 
 The solver presets select existing experiment methods and native adapters.
 Their names, resource settings and model options are carried by the experiment
@@ -84,7 +91,7 @@ export EXP_WORKSPACE=/path/to/experiment-workspace
   --env-file "$EXP_WORKSPACE/provider.env" \
   --dry-run \
   -- run "$EXP_WORKSPACE/tasks.jsonl" \
-  --workflow opencollab_exp.workflows.self_collab:self_collab \
+  --workflow opencollab.builtin_workflows:duo --agent-profile base \
   --output "$EXP_WORKSPACE/oce-results"
 ```
 
@@ -118,9 +125,10 @@ provider environment values remain outside the CLI result.
 
 | Command | Responsibility |
 | --- | --- |
-| `oc-exp methods` | List all 32 callable experiment method references |
+| `oc-exp methods` | List all 33 callable experiment method references |
 | `oc-exp run` | Invoke an OCE or Pier backend with explicit native arguments |
-| `oc-exp g22` | Run the existing G22 experiment controller |
+| `oc-exp duo` | Run canonical OC Duo with experiment deployment and independent scoring |
+| `oc-exp g22` | Compatibility command name for canonical Duo |
 | `oc-exp campaign` | Run campaign scheduling and supervision |
 | `oc-exp swe-run` | Run the existing SWE Pro-Lite experiment runner |
 | `oc-exp rejudge-queue` | Process the existing rejudgement queue |
@@ -160,11 +168,14 @@ OpenCollab-Eval 负责评测引擎与正式评分，Pier 作为独立安装的�
 
 配套 OCE 接口修改位于 `codex/extract-experiment-layer` 分支，OCE 的 `main` 分支保持原状。
 开发时使用该分支的独立 checkout，与 OpenCollab 和 OpenCollabExp 进行三仓 editable 安装。
+配套开发版本为 OpenCollab 0.8.x 和 OpenCollab-Eval 0.8.x。
 独立 venv、uv 缓存、pip 缓存和 Ruff 缓存均放在源码目录外，安装命令见上方英文说明。
 Pier 安装在所选的独立 Python 环境中，适配器调用其原生 `pier.cli.main.app`。
 
-全部 31 个工作流和 review/fix 方法共 32 项，通过 `oc-exp methods --json` 查看。
-通用 `oc-exp run` 选择 OCE 或 Pier。G22、campaign、SWE runner、重判队列、运行包、最终报告和
+canonical OC Duo 与保留的 31 个研究工作流、review/fix 方法共 33 项，通过 `oc-exp methods --json` 查看。
+canonical 入口为 `duo`，引用 `opencollab.builtin_workflows:duo`，角色 profile `base` 解析到 `single2`。
+`oc-exp duo` 选择该原生工作流，`oc-exp g22` 是兼容命令名称。保留的研究方法继续通过显式引用独立选择。
+通用 `oc-exp run` 选择 OCE 或 Pier。Duo、campaign、SWE runner、重判队列、运行包、最终报告和
 proxy 命令由 Exp 提供，原有候选隔离、正式评分资源、进程身份和凭据保护随实现保留。
 
 solver preset 选择现有实验方法或原生适配器，资源设置与模型选项由实验配置保存。
@@ -183,9 +194,10 @@ solver preset 选择现有实验方法或原生适配器，资源设置与模型
 
 | 命令 | 职责 |
 | --- | --- |
-| `oc-exp methods` | 列出全部 32 项可调用实验方法引用 |
+| `oc-exp methods` | 列出全部 33 项可调用实验方法引用 |
 | `oc-exp run` | 使用显式原生参数调用 OCE 或 Pier 后端 |
-| `oc-exp g22` | 执行现有 G22 实验控制器 |
+| `oc-exp duo` | 运行 canonical OC Duo，配合实验部署与独立评分 |
+| `oc-exp g22` | canonical Duo 的兼容命令名称 |
 | `oc-exp campaign` | 执行批量实验调度与监控 |
 | `oc-exp swe-run` | 执行现有 SWE Pro-Lite 实验 runner |
 | `oc-exp rejudge-queue` | 处理现有重判队列 |
@@ -205,4 +217,4 @@ Pier 采用 job 配置文件，外层 `--config` 指定该文件，分隔符之�
 详细说明可通过 [架构](docs/architecture.md)、[迁移](docs/migration.md)、
 [方法清单](docs/methods.zh-CN.md) 和 [后端接口](docs/backends.md) 阅读。
 DW 环境准备和部署命令见 [SWE Pro-Lite 操作说明](docs/zh-CN/swe-prolite-operations.md)。
-开发检查使用外部 venv，CLI 与后端测试采用假程序，方法测试加载完整 32 项入口并检查实际调用关系。
+开发检查使用外部 venv，CLI 与后端测试采用假程序，方法测试加载完整 33 项入口并检查实际调用关系。

@@ -10,7 +10,11 @@ import sys
 
 import pytest
 from opencollab_eval.generation.gen_prediction_config import validate_generation_limits
-from opencollab_eval.runtime_config import resolve_runtime_config
+from opencollab_eval.runtime_config import (
+    SINGLE2_AUTHORIZED_BUDGET,
+    SINGLE2_AUTHORIZED_MAX_STEPS,
+    resolve_runtime_config,
+)
 from swe_v1_prolite_runner_test_support import (
     _proven_submission_integrity,
     _remote_namespace,
@@ -56,6 +60,12 @@ def _fresh_generation(namespace, monkeypatch, *, metric_updates=None):
                 "budget": None, "max_steps": None, "context_window": 1_048_576,
                 **_proven_submission_integrity(patch),
             }
+            if namespace["workflow"] == "single-agent":
+                metric.update(
+                    budget=SINGLE2_AUTHORIZED_BUDGET,
+                    max_steps=SINGLE2_AUTHORIZED_MAX_STEPS,
+                    agent_profile="single2",
+                )
             metric.update(metric_updates or {})
             _write_jsonl(run_dir / "metrics.jsonl", [metric])
             return 0

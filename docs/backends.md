@@ -28,6 +28,13 @@ provider settings supplied through native flags or the environment. Keep the
 adapter's `config` field unset for this native command. Workflow callables are
 selected with OCE's `--workflow module:function` argument.
 
+The paired versions are OpenCollab 0.8.x and OpenCollab-Eval 0.8.x. Select
+canonical OC Duo with `--workflow opencollab.builtin_workflows:duo` and the
+`base` role profile, which resolves to `single2`. The experiment command
+`oc-exp duo` deploys the same canonical workflow; `oc-exp g22` is its
+compatibility name. Retained research methods use their explicit callable
+references. The adapter forwards the chosen profile and budget arguments.
+
 Pier calls its native application through `pier.cli.main.app`. The adapter uses
 `python -c 'from pier.cli.main import app; app()'`. For a native job configuration,
 select `backend="pier"`, `python="/opt/pier/bin/python"`, `argv=("run",)` and

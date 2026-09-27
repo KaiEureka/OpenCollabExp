@@ -8,7 +8,7 @@ from typing import Any
 from opencollab.workflows import CandidateRun, workflow
 from opencollab_eval.patch_diff import patch_paths
 
-from . import validation_council_dual_coder_contract as dual_coder
+from . import _legacy_dual_coder as dual_coder
 from . import validation_council_wired_dual_contract as contract
 from ._candidate_evidence_files import CandidateEvidenceFiles, ReadCandidateEvidence
 from ._validation_council_solve_defs import SHARED_RULES, structured_role_timeout_seconds

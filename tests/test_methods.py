@@ -21,7 +21,7 @@ def test_every_declared_workflow_has_an_explicit_loadable_method():
                 spec = getattr(value, "__workflow_spec__", None)
                 if spec is not None:
                     declared.add(spec.name)
-    assert set(methods.WORKFLOW_METHODS) == declared | {"generate_review_fix"}
+    assert set(methods.WORKFLOW_METHODS) == declared | {"generate_review_fix"} | set(methods.CANONICAL_WORKFLOW_METHODS)
     for name in declared:
         selected = methods.load_workflow(name)
         assert selected.__workflow_spec__.name == name
@@ -33,6 +33,8 @@ def test_original_package_exports_keep_the_same_method_functions():
     for export in workflows.__all__:
         selected = getattr(workflows, export)
         name = selected.__workflow_spec__.name
+        if name in methods.CANONICAL_WORKFLOW_METHODS:
+            continue
         original_names.add(name)
         assert methods.load_workflow(name) is selected
     assert original_names == set(methods.LEGACY_BUNDLED_WORKFLOWS)
@@ -50,6 +52,7 @@ def test_previously_missing_solver_targets_resolve_to_their_actual_methods(solve
 @pytest.mark.parametrize(
     ("name", "expected_environment"),
     [
+        ("duo", "isolated"),
         ("validation-council-solve", "shared"),
         ("validation-council-lean-official-v1", "lean"),
         ("validation-council-dual-coder-contract-v1", "isolated"),

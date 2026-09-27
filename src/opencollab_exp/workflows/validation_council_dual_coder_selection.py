@@ -6,7 +6,7 @@ from typing import Any
 
 from opencollab.workflows import workflow
 
-from . import validation_council_dual_coder_contract as dual_coder
+from . import _legacy_dual_coder as dual_coder
 
 SELECTION_PROMPT = dual_coder.CONTRACT_PROMPT + """
 

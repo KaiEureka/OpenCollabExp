@@ -12,6 +12,7 @@ from pathlib import Path
 from opencollab_exp import __version__
 
 COMMAND_MODULES = {
+    "duo": "opencollab_exp.commands.duo",
     'g22': 'opencollab_exp.commands.g22',
     'campaign': 'opencollab_exp.commands.swe_g11_parallel_runner',
     'swe-run': 'opencollab_exp.commands.swe_v1_prolite_runner',
@@ -83,8 +84,8 @@ def build_parser() -> argparse.ArgumentParser:
 def main(argv: list[str] | None = None) -> int:
     arguments = list(sys.argv[1:] if argv is None else argv)
     if arguments and arguments[0] in COMMAND_MODULES:
-        if arguments[0] == 'g22':
-            return importlib.import_module(COMMAND_MODULES['g22']).main(arguments[1:])
+        if arguments[0] in {'g22', 'duo'}:
+            return importlib.import_module(COMMAND_MODULES[arguments[0]]).main(arguments[1:])
         return _module_main(COMMAND_MODULES[arguments[0]], arguments[1:])
     parser = build_parser()
     args = parser.parse_args(arguments)
